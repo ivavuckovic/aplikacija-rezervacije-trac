@@ -34,8 +34,8 @@ export default defineConfig({
   },
 
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(
-      process.env.VITE_API_URL || 'http://localhost:4001/api'
+    'import.meta.env.VITE_API_URL_A2': JSON.stringify(
+      process.env.VITE_API_URL_A2 || 'http://localhost:4001/api'
     ),
   },
 });
