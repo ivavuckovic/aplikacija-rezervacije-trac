@@ -22,21 +22,23 @@ class RabbitMQPublisher {
 
   async connect(): Promise<void> {
     try {
-      this.connection = await amqplib.connect(this.url);
-      this.channel    = await this.connection.createChannel();
+      this.connection = (await amqplib.connect(this.url)) as any;
+      if (!this.connection) throw new Error('Failed to connect to RabbitMQ');
+      this.channel    = await (this.connection as any).createChannel();
+      if (!this.channel) throw new Error('Failed to create channel');
 
       await this.channel.assertExchange(EXCHANGE_NAME, 'topic', {
         durable: true,
       });
 
-      this.connection.on('close', () => {
+      (this.connection as any).on('close', () => {
         console.warn('⚠  RabbitMQ connection closed. Reconnecting in 5s...');
         this.connection = null;
         this.channel    = null;
         setTimeout(() => this.connect(), 5000);
       });
 
-      this.connection.on('error', (err) => {
+      (this.connection as any).on('error', (err: Error) => {
         console.error('❌ RabbitMQ connection error:', err.message);
       });
 
@@ -89,7 +91,7 @@ class RabbitMQPublisher {
   async close(): Promise<void> {
     try {
       await this.channel?.close();
-      await this.connection?.close();
+      await (this.connection as any)?.close();
       console.log('✅ RabbitMQ Publisher closed');
     } catch (error) {
       console.error('❌ Error closing RabbitMQ Publisher:', error);

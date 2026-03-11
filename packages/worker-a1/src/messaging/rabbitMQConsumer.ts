@@ -24,10 +24,12 @@ export class RabbitMQConsumer {
   // ── Konekcija i setup exchange/queue-a ────────────
   async connect(): Promise<void> {
     try {
-      this.connection = await amqplib.connect(this.url);
-      this.channel    = await this.connection.createChannel();
+      this.connection = (await amqplib.connect(this.url)) as any;
+      if (!this.connection) throw new Error('Failed to connect to RabbitMQ');
+      this.channel    = await (this.connection as any).createChannel();
 
       // Prefetch = 1: Worker obrađuje 1 poruku u isto vreme
+      if (!this.channel) throw new Error('Failed to create channel');
       await this.channel.prefetch(1);
 
       // ── Main Exchange ──────────────────────────────
@@ -71,12 +73,12 @@ export class RabbitMQConsumer {
       await workerPublisher.connect(this.connection);
 
       // ── Graceful shutdown ──────────────────────────
-      this.connection.on('close', () => {
+      (this.connection as any).on('close', () => {
         console.warn('⚠  RabbitMQ connection closed. Reconnecting...');
         setTimeout(() => this.connect(), 5000);
       });
 
-      this.connection.on('error', (err) => {
+      (this.connection as any).on('error', (err: Error) => {
         console.error('❌ RabbitMQ connection error:', err.message);
       });
 
@@ -196,7 +198,7 @@ export class RabbitMQConsumer {
     try {
       await workerPublisher.close();
       await this.channel?.close();
-      await this.connection?.close();
+      await (this.connection as any)?.close();
       console.log('✅ Consumer closed');
     } catch (error) {
       console.error('❌ Error closing consumer:', error);

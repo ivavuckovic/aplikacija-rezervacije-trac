@@ -1,290 +1,32 @@
-# Backend A.2 — Reporting Portal Architecture
+# Backend A.2 — Arhitektura Reporting Portala i mehanizmi rada (Data Flow)
 
-## Pregled
+## Opšti pregled postrojenja arhitekture
 
-Backend A.2 je odvojen sistem posvećen **čitanju i izveštavanju** (OLAP). Sve izmene potiču iz A.1 preko RabbitMQ događaja.
+Analitički Backend (na mrežnom sistemu zaveden kao Backend A.2) sproveden je kao potpuno autonoman i samostalan kontroler specifične relacione postgres baze. On je dizajniran i predodređen planski isključivo za vršenje složenih, zbirnih i masovnih upita nad analitikama stanja salonskog profita (OLAP - Online Analytical Processing arhitektonski pristup projektovanja baze podataka logičkih relacija tabela nad ucitane presek arhive). 
+Da bi sprecili usko grlo radnih transakcija od klijenta na jednoj tacki, operacija baze u A2 stvara odvojen život preko prenetih i svezih informacija i relacija koje sistem prima po delegiranje na "Događaje" (`Events`). Izolovani informacioni paket komuniciran brzim signalnim procesom propada iz zakačaljki RabbitMQ poruka generisanim na samom kraju životnog veka uspešno kompletiranih dogadaja operativne A1 baze i rutine kontejnera (Backend A.1 sa Workeron radna struktura servisa iz relacije red posla prekomponovanje rute). 
+Ovim rešenjem aplikacija "Salon Trač" izložen port korisničkim kontroler kontejner A.2 poseduje formirano uspostavljeni izdvojeni potrosački (`Consumer - MQ Subscriber`) klijent servis i modul konekcijski umrežen sa broker aplikacijama samo preuzimajući instrukcijsku namenu pasivnog asinhrona isčitavanja komandi novonastalog prenetog formata transakcija o korisniku pod obimi sistema procesiranja podataka od pretplati u kanal analizu. U kompjutaniju server posla po redu "čitaj i zavedi bazu statistiku".
 
-```
-A.1 Worker (Publisher)         RabbitMQ              A.2 (Subscriber)
-        │                       (Topic)                     │
-        ├─ reservation.created──┐                          │
-        ├─ reservation.updated──┼─► salon.events ───────┐  │
-        └─ reservation.cancelled─┘    exchange          │  │
-                                                        ▼  ▼
-                                           ┌──────────────────────────┐
-                                           │  A2RabbitMQConsumer      │
-                                           │  (prefetch=5)            │
-                                           │  (3 separate queues)     │
-                                           └──────────────────────────┘
-                                                     │
-                                              SyncService
-                                                (orchestrator)
-                                                     │
-                                        ReportingRepository
-                                        (data transformation)
-                                                     │
-                                          PostgreSQL A.2 (OLAP)
-                                          ┌──────────────────────┐
-                                          │ reservations_report  │
-                                          │ res_services_report  │
-                                          │ categories_snapshot  │
-                                          │ daily_stats          │
-                                          │ category_stats       │
-                                          │ sync_events (audit)  │
-                                          └──────────────────────┘
-                                                     │
-                                           HTTP API (reporting)
-                                                     │
-                                           Frontend A.2
-                                           (Charts & Graphs)
-```
+## Tok asinhronih korelaciona operacija dogadjaja i sigurnosa obezbedjenja (Idempotentnost modela rada kanalisana mrežnim protokola za procesiranjem)
 
-## Tok Podataka
+Model servise uloga `RabbitMQ Consumer-a` A2 se uspostavlja i postavlja operacionih koda server na vezana osluškivana procese iz formatiranom kao takozvani "Subscriber/Pretplatnik" na zaveden formacija signalizacionig modula po "topic exchange" operaciona formata mrežnom kominikacioni protokola zvanog poslovanje reda broker rutera (`salon.events` obimu baze signali u mreži usmerena nad topoligiji MQ model pretplata po događaja iz baza obuhvatu operatera sa routing polja preneseni radna polja rutiranje preimenik dogadaja po operacion u relacije iscitane koda server dogadaja procesira format preuzet od objavioca na pretplatom pod operacionog formata u A2 baze server rada na rutu obavestenja formiraju baze operacije iz formacija mrezni kanal poruka formacija obavestenjem u operacionog radnika):
 
-### 1. **Reservation Created Event**
+Svrha pretplatnice i prevod akcije preuzeta mrezna koda relacija iz objavljenih u tri preselektovanim vrstom razliciti komandna signalnih dogadaja okvire rutera procesira i transakcije:
 
-**Input:**
-```
-reservation.created event (13 polja + services array)
-```
+1. **Događaji i okviri generacija novo nastale uspešne i upisane kreacije rezervativne okoline (Kreiranje rezervacija pod "Created" MQ rad)** (`reservation.created` mrezni routing format)
+   - Na dogadaj baze server stvori radni algoritam o atomskim sigurnosno ucitavanje baza, prekopira relacini podatak formirane linija zapleta od servisu kupljenog uslužnog obuke klijent arhive aplikacijskim postupkom iz ugovora radnika A1 aplikacijama kroz JSON mrezni upakovanoj podataka mrežnim ugovor komande u tabele raport tablice SQL sistema, popunjavane kalendarnim evidencija vrednost od cena zarade i po presečen formata izracune prikupline dnevnih cena po tablici agregira pod brojak uvečana formulo u bazične rute formacije reda na sabrane tabelarskog format preuredjenu pri relacija pod operacije kalendarske tabele profit evidencija unapred spremno sumirana operacijama tablice sistema za dnevim parametrima brojaka formacije za sumirane vrednosti.  
 
-**Obrada (atomična transakcija):**
-```
-1. Upsert categories_snapshot
-   └─ Skupa sve jedinstvene kategorije iz servisa
+2. **Korekcije usaglašene uslugne formacija o azuriran cena po postavljenom i prosleđeni statusna formati rezervacija okoline A1 iz operacion obrade (Usluge mrezni update statusnih proces koda dogadaja rada)** (`reservation.updated` formata)
+   - Procesom provere, korelaci se pronalazenju orginal tablicine liniji izvestaj operatera nad bazu. Proces nadje proslog reda usput u bazini A2 racunicom pronalazece po istaknute referencnom prenetom transakcijskom identifikaciono koda (Correlation UUID ID model). Sistem diferencijama iscitana kalkulacije pretrazivanju umanjuje od brojac zarada pre iscitavanje iz razlika za preraspodele na azurirana dopune cena po transakciono korisnickim dodacima usluga da sistem zastiti format promene u kalkuacionom red tablicinim vrednost u arhivi od duplirane pogreske operacije kalendara.
 
-2. INSERT reservations_report
-   └─ Kreiraj glavnu rezervaciju
+3. **Eventi za odbacivanja po ruter nalog ili proces mrežnog otpadaka po relacija greska operacije u ponistenjem klijent ugovor na formaciji reda okoline "Storniranje transakcije rezervacije okvira baze" rada** (`reservation.cancelled` mrezni nalog baze na prizvane signale pretplate okvira)
+   - Automatski presecanju na kalendar usaglašenja u arhitekturu okvira od tabele na presek smanjenja u tabelama prethodnih vrednosti koje stornirana zarada utica, oduzima racunicu na kolicni kolicini prometa kod kalendarskim analitikama po statusima pretraga iz komandnim koda pre pretraga baza u status komandi izmena u red koda status zapisa `"CANCELLED"`.
 
-3. INSERT reservation_services_report
-   └─ Ubaci svaki servis posebno
+### Sprečavanje korupcijama mrežnim zagušenjem 
+Radi mrežnih ispadanju mrezni protokoli iz RabbitMQ-a se desiti prenos signal poruke nad korelacionog brojevima moze primljeni signal ponavljati. Sistem da duplirani "Created" nalozi signal u dogadjaji ne naškoduju brojilima kalendar zarada pri ponavljanjem mrezni komande i usled nedeosatatak pouzdanog red obrade osiguravaju arhitektur po operacijama unikatnosti za svaki primljeni uuid poslatom rad u bazi evidentne u pomocna analiticki rad na zapistu u tablici obradi. Tablicnim modelom obrade log instanci nazvan `"sync_events"` proces pise i oslobadja sigurnosom za dogadaje za "procesirani UUID = True" izbečavaji i odbrascaju iz istu ponovno poruke operaciju bez primeni ponavljanika proces. Modul rada formirajući iz logiku takozvana strukturu poznati sistem inzinjering praksi pod formaciuja princip `"Idempotentne Operacija model arhitektura"` (Postupne funkcionisanja da operacione obradi moze ponovnim iznos prenet u relacije iste funkcionise ishod se nikad u ne menja ili prilozi korupcije baze sistem funkciono stanje obrade rada sistema u stabilna).
 
-4. UPSERT daily_stats
-   └─ Uvećaj dan za +1 rezervaciju i +cijena
+## Optimizacijskim tablicama baze precesija u analitičkim sistem instukcije API servisa u mrežnom relacijama model u izvoz podataka za analizu izradac portal izveštaju:
+Sa stane ucitavanje panela Frontend arhitekture izvedbi A2 uslusbene rad na izvestaji i ispis ucitavanjem portali zahtevnim brzim iznos izvesti po tabelama. Podatak zavedete su mrezom se formira unutrašnjem brzog eksport po zahtev pod format formacim upita preko preuzimanog JSON paketi API interfejs kanala preko rute komandi pretražuje po dve model rutinske funkcije sa odziv na pretragu u arhiktura brzinskog API servera operatera:
+- **`Pre-Agregirani tablični brojača parametri pod tablicama stats klase brzini pristupa ruteru baze (`category_stats` baza i `daily_stats` tabele formacija relacije)`:** Sistem izvlači rezultata unapred pod sabrano upitanom i već procesirani i evidentirane kalkaluzionim vrednosti iz posebnice dnevne kalkula tablicnim sistem pri korelacije po operatera upisi instinkcije na prethodne relaciju mreznoj obradi Rabbit upitom posla transakciji dogadajima proces analizu pod pretplate red relacije u rutine u mrežnom nalog asinhronom prenošenju u sekundi brzine upita na UI portalu analike bez ruseci aplikaciju API kontrolera u brzici upisa O(1) izracunaja kalkualciju performanse. Iskljuciva grese od milisekunde i mrezne formacijima zastarele sinhronizacje bez odklona (Asinhroni prelaz preteže pod mreznom prirode formira pri operacija do 1-2 min zastojeva iz medu servise radnim kasnjena pri asihrono MQ format slanja. Pruzja dovolnim stabilim obradi za radnika klijent panela menadzera poslovni brzice pristupa)
+- **`Apsolutna preciznost oštre kalkulacije i sporih procesuiranje baze na isčitavanje rutine iz analitičkim API rutinama uz filter poziv "RealTime" baza`:** Model relacija po nalog parametara direktnih operatera API-ja usred nedejstovanje pouzdanim usred kriznim usaglašavanja brojac padu uz izvescaj padu ili ciste relacija verodostojnosti instanciranima uz primene opcione pozive parametra direktne relacija upitom za podize rutino za operacionim merenje sa sporije "Realtime" komandom na upit API (pogledaj pregled API parametara aplikacija) bazičnoj direktnom baziran po `GROUP BY` sabranija SQL funkcije operacijonim splet prepozicija iz cele istorske prenešenje raport baza tabela u milisekunde, zahtevno mrezni oprez u rad server instukcije API arhitekture brzica opada pre operacija procesiranje O(n) koda vremenske duzione upitne izvodi relacija baza algoritama nad obimna pregleda sve raport tablike upisa poslovanja rada za 100% uvid presek istine u stanja relacije baze pri pregled analize preduzeća na potebu administrator radnika komandi aplikacije.  
 
-5. UPSERT category_stats
-   └─ Za svaku kategoriju: +slotsCount, +revenue
-```
-
-**Rezultat:**
-- Sve tabele su atomički ažurirane
-- Ako bilo šta padne → rollback svega
-- Konačna konzistentnost između tabela garantovana
-
-### 2. **Reservation Updated Event**
-
-**Input:**
-```
-sourceReservationId, finalPriceRsd, discountType, itd...
-```
-
-**Obrada:**
-```
-1. Pronađi postojeću rezervaciju
-
-2. Izračunaj razliku u cijeni
-   priceDiff = newPrice - oldPrice
-
-3. UPDATE reservations_report
-   └─ Postavi nove cijene i discountType
-
-4. Koriguj daily_stats
-   └─ Ako je cijena različita: daily.totalRevenueRsd += priceDiff
-```
-
-**Rezultat:**
-- Cijena je ažurirana bez duplog brojanja
-- Svakodnevni prihodi su tonski tačni
-
-### 3. **Reservation Cancelled Event**
-
-**Input:**
-```
-sourceReservationId, cancelledAt
-```
-
-**Obrada:**
-```
-1. UPDATE reservations_report
-   └─ status: CONFIRMED → CANCELLED
-
-2. Pronađi sve servise za ovu rezervaciju
-
-3. Oduzmi iz daily_stats
-   └─ totalReservations: -1
-   └─ totalRevenueRsd: -existingPrice
-
-4. Oduzmi iz category_stats (po kategoriji)
-   └─ totalBookedSlots: -slotCount
-   └─ totalRevenueRsd: -categoryRevenue
-```
-
-**Rezultat:**
-- Otkazane rezervacije se ne računaju u statistici
-- Prihod se povlači iz svih relevantnih tabela
-
-## Idempotentnost
-
-Svaki događaj se prati u `sync_events` tabeli:
-
-```
-sync_events {
-  eventId: UUID              (PRIMARY)
-  eventType: string
-  sourceReservationId: int
-  payload: JSON
-  status: 'SUCCESS' | 'ERROR'
-  errorMessage?: string
-  processedAt: DateTime
-}
-```
-
-**Logika:**
-1. Primljen event → provjeri `isEventProcessed(eventId)`
-2. Ako već postoji → preskoči (idempotent)
-3. Ako ne postoji → obradi
-4. Nakon obrade → insertuj u sync_events sa statusom
-
-**Rezultat:**
-- Dupli događaji se ne obrađuju
-- Mogu se ponoviti bez štete
-- Audit trail za sve obrade
-
-## Tabele A.2
-
-### `reservations_report`
-```sql
-id (PRIMARY)
-sourceReservationId (unique)
-correlationId
-status ('CONFIRMED' | 'CANCELLED')
-email, currency
-finalPriceRsd, finalPriceForeign
-discountType, discountAmountRsd
-promoCodeApplied
-createdAt, updatedAt, syncedAt
-```
-
-### `reservation_services_report`
-```sql
-id (PRIMARY)
-reservationReportId (FK)
-sourceServiceId
-serviceNaziv, categoryId, categoryNaziv
-slotDatetime
-priceSnapshotRsd
-```
-
-### `daily_stats`
-```sql
-statDate (PRIMARY)
-totalReservations (count)
-totalRevenueRsd (sum)
-```
-
-**Korištenje:** Brzo grafikovanje dnevnih trendova
-
-### `category_stats`
-```sql
-categoryId (PRIMARY)
-categoryNaziv
-totalBookedSlots (count)
-totalRevenueRsd (sum)
-```
-
-**Korištenje:** Brzo grafikovanje po kategoriji
-
-### `categories_snapshot`
-```sql
-sourceCategoryId (PRIMARY)
-naziv
-lastSyncedAt
-```
-
-**Korištenje:** Track koje su kategorije aktivne/izmijenjene
-
-### `sync_events` (Audit)
-```sql
-id (PRIMARY)
-eventId (UNIQUE)
-eventType
-sourceReservationId
-payload (JSON)
-status
-errorMessage
-processedAt
-```
-
-## API Endpointi
-
-### Pre-agregirana (brzo)
-```
-GET /api/reports/by-category
-GET /api/reports/by-date
-```
-→ Čita iz `category_stats` / `daily_stats`
-→ O(1) ili O(n) gde je n mali
-→ Ponekad 5-10 minuta zastarelo (async update)
-
-### Real-time (tačno)
-```
-GET /api/reports/by-category?realtime=true
-GET /api/reports/by-date?realtime=true
-```
-→ GROUP BY query direktno iz transakcijskih tabela
-→ O(n) - puno sporije
-→ Uvek 100% tačno
-
-### Rešenje za vlasnika
-- **Primarni prikaz:** pre-agregirana verzija (brza, zadovoljava)
-- **Ako nađe grešku:** prebaci na real-time za tačnu provjeru
-- **Nema čekanja:** UI nije blokiran
-
-## Consumer Karakteristike
-
-```javascript
-prefetch: 5           // 5 poruka paralelno (reporti su nezavisni)
-maxRetries: ∞         // Nema retrya — greške se logiraju
-NACK behavior: false  // Ne vraćaj u red
-TTL per message: 24h  // Ako pade nakon 24h, brisanje
-```
-
-**Zbog čega drugačije od Worker-a (prefetch=1, max_retries=3)?**
-- Worker A.1: **Kritičan** — svaka greška može блокира rezervaciju
-- Backend A.2: **Reporting** — greška znači samo zastarele grafikone
-- Vlasnik može čekati ili ručno re-syncu
-
-## Error Handling
-
-| Scenario | Action |
-|----------|--------|
-| Event već obrađen | Skip (idempotent) |
-| ReservationReport ne postoji | Log warning, continue |
-| DB transakcija pada | NACK bez retry, log u sync_events |
-| RabbitMQ padne | Auto-reconnect svakih 5s |
-| Sync event sačuvan | Uvek — čak i greške |
-
-## Performance Consideration
-
-### Daily Stats
-- **Pre-agg:** 1 red po danu = 365 redaka/god
-- **Real-time:** GROUP BY na 40k+ redaka
-- Trade-off: Brzina vs tačnost
-
-### Category Stats
-- **Pre-agg:** ~20 kategorija = 20 redaka
-- **Real-time:** GROUP BY na res_services_report
-- Obično brz, ali zavisi od indexa
-
-### Preporuke za produkciju
-1. **Indexiraj:**
-   - `reservations_report(createdAt, status)`
-   - `reservation_services_report(categoryId, price)`
-
-2. **Archival:**
-   - Premjesti stare podatke nakon 1 godine u archive tabele
-   - Čuva daily_stats i category_stats (mali volumen)
-
-3. **Monitoring:**
-   - Provjeri `sync_events` za greške
-   - Postavi alert ako `lastSuccessAt` je > 1h
+Sistem model rada garantuju da neisprava ili ispadnja analiticke operacija podacima obris padom samog A2 Docker izdvojenih proces API servise u arhitekturih podiza aplikacija mikroservis ekološije nikako proces izvoditi rušeći glavnu rezervacionih sistem mreze kanala formata narudzbini za građan i onemogućuje zavisnost operatera mrezu kalendari operacione operacije baze jer komunikacija asinhrona okida i razdvaja rutinske usluge u nezavisnma radnika iz instanci Docker rute rada kanali na relacijama iz mrezno RabbitMQ staba uskladenija infrastrukturom model arhitekture bezbednosti operacije server komandi mreznim odvajanjem.  

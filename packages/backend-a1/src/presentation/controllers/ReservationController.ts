@@ -135,9 +135,9 @@ export class ReservationController {
           discountType:      reservation.discountType,
           finalPriceRsd:     Number(reservation.finalPriceRsd),
           finalPriceForeign: Number(reservation.finalPriceForeign),
-          promoCodeApplied:  reservation.promoCodeApplied,
+          promoCodeApplied:  reservation.promoCodeApplied ?? undefined,
           createdAt:         reservation.createdAt,
-          promoCode:         reservation.generatedPromoCode?.code,
+          promoCode:         reservation.promoCodeApplied ?? undefined,
           services:          reservation.reservationServices.map((rs) => ({
             serviceId:        rs.serviceId,
             serviceNaziv:     rs.service.naziv,

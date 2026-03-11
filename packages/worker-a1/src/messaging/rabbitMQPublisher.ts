@@ -15,8 +15,9 @@ class WorkerPublisher {
   async connect(existingConnection: Connection): Promise<void> {
     // Worker deli konekciju sa Consumer-om, ali ima zasebni channel
     this.connection = existingConnection;
-    this.channel    = await this.connection.createChannel();
+    this.channel    = await (existingConnection as any).createChannel();
 
+    if (!this.channel) throw new Error('Failed to create publisher channel');
     await this.channel.assertExchange(EXCHANGE_NAME, 'topic', {
       durable: true,
     });

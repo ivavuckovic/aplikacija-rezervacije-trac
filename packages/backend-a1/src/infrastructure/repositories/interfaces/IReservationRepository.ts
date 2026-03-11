@@ -34,6 +34,7 @@ export interface CreateReservationData {
 export interface UpdateReservationData {
   status?:             ReservationStatus;
   sifra?:              string;
+  basePriceRsd?:       number;
   discountAmountRsd?:  number;
   discountType?:       string;
   finalPriceRsd?:      number;

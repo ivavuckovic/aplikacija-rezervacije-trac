@@ -30,8 +30,10 @@ export class A2RabbitMQConsumer {
   // ── Setup konekcije i svih queues ─────────────────
   async connect(): Promise<void> {
     try {
-      this.connection = await amqplib.connect(this.url);
-      this.channel    = await this.connection.createChannel();
+      this.connection = (await amqplib.connect(this.url)) as any;
+      if (!this.connection) throw new Error('Failed to connect to RabbitMQ');
+      this.channel    = await (this.connection as any).createChannel();
+      if (!this.channel) throw new Error('Failed to create channel');
 
       // Prefetch 5 — reporting može obrađivati više odjednom
       await this.channel.prefetch(5);
@@ -131,7 +133,7 @@ export class A2RabbitMQConsumer {
   async close(): Promise<void> {
     try {
       await this.channel?.close();
-      await this.connection?.close();
+      await (this.connection as any)?.close();
       console.log('✅ [A.2] Consumer closed');
     } catch (error) {
       console.error('❌ [A.2] Error closing consumer:', error);
