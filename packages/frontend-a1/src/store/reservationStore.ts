@@ -89,7 +89,11 @@ export const useReservationStore = create<ReservationState>()(
       resetForm: () => set({ ...INITIAL_STATE }),
     }),
     {
-      name:    'trac-reservation',
+      name:        'trac-reservation',
+      partialize:  (state) => ({
+        correlationId: state.correlationId,
+        confirmed:     state.confirmed,
+      }),
     },
   ),
 );
