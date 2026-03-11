@@ -1,0 +1,273 @@
+.page {
+  display:        flex;
+  flex-direction: column;
+  gap:            4rem;
+}
+
+/* ── Hero ─────────────────────────────────── */
+.hero {
+  background:    linear-gradient(135deg, #fdf6f0 0%, #f5ebe0 100%);
+  border-radius: var(--radius-lg);
+  padding:       3.5rem 3rem;
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  gap:           2rem;
+  border:        1px solid var(--color-border);
+}
+
+.heroContent { max-width: 600px; }
+
+.heroBadge {
+  display:       inline-block;
+  background:    var(--color-primary);
+  color:         white;
+  padding:       0.3rem 1rem;
+  border-radius: 999px;
+  font-size:     0.8rem;
+  font-weight:   600;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.heroTitle {
+  font-size:     2.5rem;
+  font-weight:   800;
+  color:         var(--color-text);
+  line-height:   1.2;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size:     1.05rem;
+  color:         var(--color-text-muted);
+  line-height:   1.7;
+  margin-bottom: 2rem;
+  max-width:     480px;
+}
+
+.heroActions {
+  display:   flex;
+  gap:       1rem;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  padding:       0.75rem 1.75rem;
+  background:    var(--color-primary);
+  color:         white;
+  border-radius: var(--radius-md);
+  font-weight:   600;
+  font-size:     0.95rem;
+  text-decoration: none;
+  transition:    all 0.2s;
+  box-shadow:    var(--shadow-sm);
+}
+
+.btnPrimary:hover {
+  background:    var(--color-primary-dark);
+  transform:     translateY(-1px);
+  box-shadow:    var(--shadow-md);
+  text-decoration: none;
+}
+
+.btnSecondary {
+  padding:       0.75rem 1.75rem;
+  background:    white;
+  color:         var(--color-primary);
+  border:        2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-weight:   600;
+  font-size:     0.95rem;
+  text-decoration: none;
+  transition:    all 0.2s;
+}
+
+.btnSecondary:hover {
+  background:    var(--color-secondary);
+  text-decoration: none;
+}
+
+.heroDecor { font-size: 8rem; opacity: 0.4; }
+
+/* ── Info kartice ──────────────────────────── */
+.infoSection {}
+
+.infoGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap:                   1.25rem;
+}
+
+.infoCard {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           1rem;
+  padding:       1.5rem;
+  background:    white;
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow:    var(--shadow-sm);
+  transition:    box-shadow 0.2s;
+}
+
+.infoCard:hover { box-shadow: var(--shadow-md); }
+
+.infoIcon { font-size: 1.75rem; }
+
+.infoCard h3 {
+  font-size:     0.85rem;
+  font-weight:   600;
+  color:         var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.infoCard p {
+  font-size:   1rem;
+  font-weight: 500;
+  color:       var(--color-text);
+}
+
+.infoCard small {
+  font-size: 0.8rem;
+  color:     var(--color-text-muted);
+}
+
+/* ── Kategorije ─────────────────────────────── */
+.sectionHeader {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   1.5rem;
+}
+
+.sectionHeader h2 {
+  font-size:   1.5rem;
+  font-weight: 700;
+}
+
+.viewAll {
+  color:       var(--color-primary);
+  font-weight: 500;
+  font-size:   0.9rem;
+}
+
+.categoriesGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap:                   1.25rem;
+}
+
+.categoryCard {
+  padding:         1.5rem;
+  background:      white;
+  border:          1px solid var(--color-border);
+  border-radius:   var(--radius-md);
+  text-decoration: none;
+  color:           var(--color-text);
+  transition:      all 0.2s;
+  box-shadow:      var(--shadow-sm);
+  display:         flex;
+  flex-direction:  column;
+  gap:             0.5rem;
+}
+
+.categoryCard:hover {
+  border-color: var(--color-primary);
+  box-shadow:   var(--shadow-md);
+  transform:    translateY(-2px);
+  text-decoration: none;
+}
+
+.categoryIcon  { font-size: 2rem; }
+
+.categoryName {
+  font-size:   1rem;
+  font-weight: 700;
+}
+
+.categoryCount {
+  font-size: 0.8rem;
+  color:     var(--color-text-muted);
+}
+
+.categoryServices {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       0.4rem;
+  margin-top: 0.5rem;
+}
+
+.serviceTag {
+  background:    var(--color-secondary);
+  color:         var(--color-primary-dark);
+  padding:       0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size:     0.72rem;
+  font-weight:   500;
+}
+
+.moreTag {
+  background:    var(--color-border);
+  color:         var(--color-text-muted);
+  padding:       0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size:     0.72rem;
+}
+
+/* ── CTA Banner ─────────────────────────────── */
+.ctaBanner {
+  background:      linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius:   var(--radius-lg);
+  padding:         3rem;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             2rem;
+  flex-wrap:       wrap;
+}
+
+.ctaContent h2 {
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         white;
+  margin-bottom: 0.5rem;
+}
+
+.ctaContent p {
+  color:     rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+.ctaBtn {
+  padding:         0.85rem 2rem;
+  background:      white;
+  color:           var(--color-primary);
+  border-radius:   var(--radius-md);
+  font-weight:     700;
+  font-size:       0.95rem;
+  text-decoration: none;
+  white-space:     nowrap;
+  transition:      all 0.2s;
+  box-shadow:      var(--shadow-md);
+}
+
+.ctaBtn:hover {
+  transform:       translateY(-1px);
+  box-shadow:      var(--shadow-lg);
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    padding:        2rem 1.5rem;
+    text-align:     center;
+  }
+  .heroTitle   { font-size: 1.75rem; }
+  .heroActions { justify-content: center; }
+  .heroDecor   { display: none; }
+  .ctaBanner   { flex-direction: column; text-align: center; }
+}
