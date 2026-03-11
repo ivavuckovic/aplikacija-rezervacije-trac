@@ -3,6 +3,14 @@ import cors    from 'cors';
 import helmet  from 'helmet';
 import morgan  from 'morgan';
 
+import {
+  salonInfoRouter,
+  servicesRouter,
+  reservationsRouter,
+  exchangeRateRouter,
+  adminRouter,
+} from './presentation/routes';
+
 export const app: Application = express();
 
 // ── Security middleware ──────────────────────────────
@@ -31,7 +39,11 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // ── API rute ─────────────────────────────────────────
-// TODO: routes will be added in subsequent steps
+app.use('/api/salon-info', salonInfoRouter);
+app.use('/api/services', servicesRouter);
+app.use('/api/reservations', reservationsRouter);
+app.use('/api/exchange-rate', exchangeRateRouter);
+app.use('/api/admin', adminRouter);
 
 // ── 404 handler ───────────────────────────────────────
 app.use((_req: Request, res: Response) => {
