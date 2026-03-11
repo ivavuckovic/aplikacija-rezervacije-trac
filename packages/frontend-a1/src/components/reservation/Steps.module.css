@@ -1,0 +1,682 @@
+/* ── Step kontejner ─────────────────────────── */
+.stepContainer {
+  display:        flex;
+  flex-direction: column;
+  gap:            1.75rem;
+}
+
+.stepHeader { }
+
+.stepTitle {
+  font-size:     1.4rem;
+  font-weight:   700;
+  margin-bottom: 0.25rem;
+}
+
+.stepDesc {
+  color:     var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* ── Form elementi ──────────────────────────── */
+.form {
+  display:        flex;
+  flex-direction: column;
+  gap:            1.25rem;
+}
+
+.formRow {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   1rem;
+}
+
+.formGroup {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+}
+
+.label {
+  font-size:   0.85rem;
+  font-weight: 600;
+  color:       var(--color-text);
+}
+
+.required { color: var(--color-error); }
+
+.input {
+  padding:       0.6rem 0.875rem;
+  border:        2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size:     0.95rem;
+  outline:       none;
+  transition:    border-color 0.2s;
+  font-family:   inherit;
+}
+
+.input:focus { border-color: var(--color-primary); }
+.inputError  { border-color: var(--color-error) !important; }
+
+.errorMsg {
+  font-size: 0.78rem;
+  color:     var(--color-error);
+}
+
+/* ── Akcije ─────────────────────────────────── */
+.formActions {
+  display:         flex;
+  justify-content: flex-end;
+  gap:             1rem;
+  margin-top:      0.5rem;
+  flex-wrap:       wrap;
+}
+
+.btnNext {
+  padding:       0.7rem 1.75rem;
+  background:    var(--color-primary);
+  color:         white;
+  border:        none;
+  border-radius: var(--radius-md);
+  font-weight:   600;
+  font-size:     0.95rem;
+  cursor:        pointer;
+  transition:    background 0.2s;
+}
+
+.btnNext:hover:not(:disabled) { background: var(--color-primary-dark); }
+.btnNext:disabled              { opacity: 0.6; cursor: not-allowed; }
+
+.btnBack {
+  padding:       0.7rem 1.5rem;
+  background:    white;
+  color:         var(--color-text);
+  border:        2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-weight:   600;
+  font-size:     0.95rem;
+  cursor:        pointer;
+  transition:    all 0.2s;
+}
+
+.btnBack:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+.btnConfirm {
+  padding:       0.75rem 2rem;
+  background:    var(--color-success);
+  color:         white;
+  border:        none;
+  border-radius: var(--radius-md);
+  font-weight:   700;
+  font-size:     1rem;
+  cursor:        pointer;
+  transition:    background 0.2s;
+}
+
+.btnConfirm:hover:not(:disabled) { background: #1b5e20; }
+.btnConfirm:disabled              { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Step 2 — Selection Summary ─────────────── */
+.selectionSummary {
+  background:    #f0fdf4;
+  border:        1px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  padding:       1rem 1.25rem;
+}
+
+.selectionSummary h4 {
+  font-size:     0.85rem;
+  font-weight:   700;
+  margin-bottom: 0.75rem;
+  color:         #166534;
+}
+
+.selectionList {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.5rem;
+}
+
+.selectionItem {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  font-size:       0.85rem;
+  gap:             0.5rem;
+}
+
+.removeBtn {
+  background: none;
+  border:     none;
+  color:      var(--color-error);
+  cursor:     pointer;
+  font-size:  0.9rem;
+  padding:    0.2rem 0.4rem;
+  border-radius: var(--radius-sm);
+}
+
+.removeBtn:hover { background: #fee2e2; }
+
+/* ── Kategorije accordion ────────────────────── */
+.categoriesAccordion {
+  display:        flex;
+  flex-direction: column;
+  gap:            1.5rem;
+}
+
+.categoryGroup { }
+
+.categoryTitle {
+  font-size:     1rem;
+  font-weight:   700;
+  margin-bottom: 0.75rem;
+  color:         var(--color-text-muted);
+  padding-bottom: 0.4rem;
+  border-bottom:  1px solid var(--color-border);
+}
+
+.servicesAccordion {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.5rem;
+}
+
+.serviceAccordion {
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow:      hidden;
+  transition:    border-color 0.2s;
+}
+
+.serviceAccordionSelected { border-color: var(--color-primary); }
+
+.accordionHeader {
+  width:           100%;
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  padding:         0.85rem 1rem;
+  background:      white;
+  border:          none;
+  cursor:          pointer;
+  text-align:      left;
+  gap:             1rem;
+  transition:      background 0.15s;
+}
+
+.accordionHeader:hover { background: var(--color-secondary); }
+
+.accordionInfo {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.2rem;
+  flex:           1;
+}
+
+.accordionName  { font-weight: 600; font-size: 0.95rem; }
+.accordionMeta  { font-size: 0.78rem; color: var(--color-text-muted); }
+
+.accordionRight {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
+}
+
+.selectedBadge {
+  background:    #dcfce7;
+  color:         #166534;
+  font-size:     0.72rem;
+  font-weight:   600;
+  padding:       0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.chevron { font-size: 0.7rem; color: var(--color-text-muted); }
+
+.accordionBody {
+  padding:    1rem;
+  border-top: 1px solid var(--color-border);
+  background: #fafafa;
+}
+
+.datePicker {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dateLabel { font-size: 0.85rem; font-weight: 600; }
+
+.dateInput {
+  padding:       0.4rem 0.75rem;
+  border:        2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size:     0.875rem;
+  outline:       none;
+}
+
+.dateInput:focus { border-color: var(--color-primary); }
+
+.slotsSection { }
+
+.slotsLoading, .noSlots {
+  padding:    1rem;
+  text-align: center;
+  color:      var(--color-text-muted);
+  font-size:  0.875rem;
+}
+
+.slotsGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap:                   0.5rem;
+}
+
+.slotBtn {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  padding:        0.5rem 0.25rem;
+  border:         2px solid var(--color-border);
+  border-radius:  var(--radius-md);
+  background:     white;
+  cursor:         pointer;
+  transition:     all 0.15s;
+  gap:            0.15rem;
+}
+
+.slotBtn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background:   var(--color-secondary);
+}
+
+.slotSelected {
+  background:   var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color:        white !important;
+}
+
+.slotFull {
+  opacity:    0.4;
+  cursor:     not-allowed !important;
+  background: #f5f5f5;
+}
+
+.slotTime  { font-size: 0.8rem; font-weight: 600; }
+.slotSpots { font-size: 0.65rem; }
+
+/* ── Step 3 — Cijena layout ──────────────────── */
+.priceLayout {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   2rem;
+  align-items:           start;
+}
+
+.priceControls { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.currencyGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap:                   0.5rem;
+}
+
+.currencyBtn {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  padding:        0.6rem 0.5rem;
+  border:         2px solid var(--color-border);
+  border-radius:  var(--radius-md);
+  background:     white;
+  cursor:         pointer;
+  transition:     all 0.15s;
+  gap:            0.15rem;
+}
+
+.currencyBtn:hover { border-color: var(--color-primary); }
+
+.currencyActive {
+  border-color: var(--color-primary) !important;
+  background:   var(--color-secondary) !important;
+}
+
+.currencyCode { font-weight: 700; font-size: 0.95rem; }
+.currencyName { font-size: 0.65rem; color: var(--color-text-muted); }
+
+.promoRow {
+  display:   flex;
+  gap:       0.5rem;
+  flex-wrap: wrap;
+}
+
+.promoApplyBtn {
+  padding:       0.6rem 1rem;
+  background:    var(--color-primary);
+  color:         white;
+  border:        none;
+  border-radius: var(--radius-md);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        pointer;
+  white-space:   nowrap;
+}
+
+.promoApplyBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.promoClearBtn {
+  padding:       0.6rem 0.75rem;
+  background:    #fee2e2;
+  color:         var(--color-error);
+  border:        none;
+  border-radius: var(--radius-md);
+  cursor:        pointer;
+}
+
+.promoStatus {
+  font-size:     0.8rem;
+  font-weight:   500;
+  padding:       0.3rem 0.5rem;
+  border-radius: var(--radius-sm);
+  margin-top:    0.25rem;
+}
+
+.promoSuccess { background: #dcfce7; color: #166534; }
+.promoError   { background: #fee2e2; color: #991b1b; }
+
+.selectedServicesList {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+}
+
+.selectedServiceRow {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  font-size:       0.83rem;
+  gap:             0.5rem;
+  padding:         0.4rem 0.5rem;
+  background:      var(--color-secondary);
+  border-radius:   var(--radius-sm);
+}
+
+.selectedServiceTime  { color: var(--color-text-muted); }
+.selectedServicePrice { font-weight: 600; color: var(--color-primary); }
+
+/* ── Price Breakdown box ─────────────────────── */
+.priceBreakdown {
+  background:    white;
+  border:        2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding:       1.5rem;
+  position:      sticky;
+  top:           80px;
+}
+
+.breakdownTitle {
+  font-size:     1rem;
+  font-weight:   700;
+  margin-bottom: 1.25rem;
+}
+
+.calculating {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
+  color:       var(--color-text-muted);
+  font-size:   0.9rem;
+}
+
+.calcSpinner {
+  width:         20px;
+  height:        20px;
+  border:        2px solid var(--color-border);
+  border-top:    2px solid var(--color-primary);
+  border-radius: 50%;
+  animation:     spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.calcError {
+  color:     var(--color-error);
+  font-size: 0.85rem;
+  padding:   0.75rem;
+  background: #fee2e2;
+  border-radius: var(--radius-sm);
+}
+
+.breakdown {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.75rem;
+}
+
+.breakdownRow {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       0.9rem;
+  gap:             0.5rem;
+}
+
+.breakdownDiscount { color: var(--color-success); }
+
+.breakdownSeparator {
+  height:     1px;
+  background: var(--color-border);
+  margin:     0.25rem 0;
+}
+
+.breakdownTotal {
+  font-weight: 700;
+  font-size:   1rem !important;
+}
+
+.breakdownForeign {
+  font-size:   1rem !important;
+  color:       var(--color-primary);
+  font-weight: 700;
+}
+
+.rateLabel { font-size: 0.73rem; color: var(--color-text-muted); }
+.staleTag  { font-size: 0.7rem;  color: var(--color-warning); }
+
+/* ── Step 4 — Summary ────────────────────────── */
+.summaryCard {
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding:       1.25rem;
+}
+
+.summaryCardTitle {
+  font-size:     0.95rem;
+  font-weight:   700;
+  margin-bottom: 1rem;
+}
+
+.summaryGrid { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.summaryRow {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       0.875rem;
+  gap:             1rem;
+}
+
+.summaryLabel    { color: var(--color-text-muted); }
+.summaryValue    { text-align: right; }
+.summaryBold     { font-weight: 700; }
+.summaryHighlight { color: var(--color-success); font-weight: 600; }
+
+.summaryServiceRow {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       0.875rem;
+  padding:         0.4rem 0;
+  border-bottom:   1px solid var(--color-secondary);
+  gap:             1rem;
+}
+
+.summarySlot { color: var(--color-text-muted); }
+
+/* ── Success Screen ──────────────────────────── */
+.successScreen {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            1.5rem;
+  padding:        1rem 0;
+  text-align:     center;
+}
+
+.successIcon    { font-size: 4rem; }
+
+.successTitle {
+  font-size:   1.75rem;
+  font-weight: 800;
+  color:       var(--color-success);
+}
+
+.successDesc { color: var(--color-text-muted); max-width: 480px; }
+
+.codeBox {
+  width:         100%;
+  max-width:     480px;
+  border:        2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding:       1.25rem;
+  text-align:    left;
+  background:    var(--color-secondary);
+}
+
+.promoBox { border-color: var(--color-success); }
+
+.codeHeader {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   0.75rem;
+  font-size:       0.8rem;
+  font-weight:     600;
+  color:           var(--color-text-muted);
+}
+
+.copyBtn {
+  padding:       0.3rem 0.75rem;
+  background:    white;
+  border:        1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size:     0.75rem;
+  cursor:        pointer;
+  font-weight:   500;
+  transition:    all 0.15s;
+}
+
+.copyBtn:hover { border-color: var(--color-primary); }
+
+.codeValue {
+  font-size:      1.3rem;
+  font-weight:    800;
+  font-family:    'Courier New', monospace;
+  letter-spacing: 2px;
+  color:          var(--color-text);
+  word-break:     break-all;
+  margin-bottom:  0.5rem;
+}
+
+.codeHint { font-size: 0.78rem; color: var(--color-text-muted); }
+
+.successPrice {
+  display:     flex;
+  align-items: center;
+  gap:         0.75rem;
+  font-size:   1rem;
+}
+
+.successPrice strong { font-size: 1.25rem; color: var(--color-primary); }
+
+.successServices {
+  width:      100%;
+  max-width:  480px;
+  text-align: left;
+}
+
+.successServices h4 {
+  font-size:     0.85rem;
+  font-weight:   600;
+  color:         var(--color-text-muted);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.successServiceRow {
+  display:         flex;
+  justify-content: space-between;
+  font-size:       0.875rem;
+  padding:         0.4rem 0;
+  border-bottom:   1px solid var(--color-border);
+}
+
+.successActions {
+  display:   flex;
+  gap:       1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Failed Screen ───────────────────────────── */
+.failedScreen {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            1rem;
+  padding:        2rem 0;
+  text-align:     center;
+}
+
+.failedIcon  { font-size: 3rem; }
+.failedMsg   { color: var(--color-text-muted); max-width: 400px; }
+
+/* ── Polling Screen ──────────────────────────── */
+.pollingScreen {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            1rem;
+  padding:        3rem 1rem;
+  text-align:     center;
+}
+
+.pollingSpinner {
+  width:         56px;
+  height:        56px;
+  border:        4px solid var(--color-border);
+  border-top:    4px solid var(--color-primary);
+  border-radius: 50%;
+  animation:     spin 1s linear infinite;
+}
+
+.pollingDesc  { color: var(--color-text-muted); max-width: 380px; font-size: 0.9rem; }
+.pollingHint  { font-size: 0.78rem; color: var(--color-text-muted); }
+
+.pollingProgress {
+  width:         300px;
+  height:        6px;
+  background:    var(--color-border);
+  border-radius: 999px;
+  overflow:      hidden;
+}
+
+.pollingBar {
+  height:     100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 1s ease;
+}
+
+@media (max-width: 768px) {
+  .formRow    { grid-template-columns: 1fr; }
+  .priceLayout { grid-template-columns: 1fr; }
+}
