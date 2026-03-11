@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ──────────────────────────────────────────
+// ENUMERACIJE
+// ──────────────────────────────────────────
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FAILED
+}
+
+enum PromoCodeStatus {
+  ACTIVE
+  USED
+  INACTIVE
+}
+
+enum DiscountType {
+  NONE
+  DATE_BASED
+  PROMO_CODE
+  BOTH
+}
+
+// ──────────────────────────────────────────
+// MODELI
+// ──────────────────────────────────────────
+
+model SalonInfo {
+  id           Int      @id @default(autoincrement())
+  naziv        String   @db.VarChar(100)
+  lokacija     String   @db.VarChar(255)
+  opis         String   @db.Text
+  radnoVremeOd String   @map("radno_vreme_od") @db.VarChar(5)
+  radnoVremeDo String   @map("radno_vreme_do") @db.VarChar(5)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("salon_info")
+}
+
+model ServiceCategory {
+  id        Int       @id @default(autoincrement())
+  naziv     String    @unique @db.VarChar(100)
+  opis      String?   @db.Text
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  services Service[]
+
+  @@map("service_categories")
+}
+
+model Service {
+  id                       Int      @id @default(autoincrement())
+  categoryId               Int      @map("category_id")
+  naziv                    String   @db.VarChar(150)
+  opis                     String?  @db.Text
+  trajanjeMin              Int      @map("trajanje_min")
+  maxKlijenataPoTerminu    Int      @map("max_klijenata_po_terminu")
+  vremePocetkaPrvogTermina String   @map("vreme_pocetka_prvog_termina") @db.VarChar(5)
+  vremeZavrsetkaPoslednjeg String   @map("vreme_zavrsetka_poslednjeg") @db.VarChar(5)
+  cenaRsd                  Decimal  @map("cena_rsd") @db.Decimal(10, 2)
+  isActive                 Boolean  @default(true) @map("is_active")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  category            ServiceCategory      @relation(fields: [categoryId], references: [id])
+  reservationServices ReservationService[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("services")
+}
+
+model AllowedCurrency {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.VarChar(3)
+  naziv     String   @db.VarChar(50)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("allowed_currencies")
+}
+
+model DiscountConfig {
+  id                 Int      @id @default(autoincrement())
+  discountPercentage Decimal  @default(10.00) @map("discount_percentage") @db.Decimal(5, 2)
+  validUntil         DateTime @map("valid_until") @db.Date
+  isActive           Boolean  @default(true) @map("is_active")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("discount_config")
+}
+
+model Reservation {
+  id                   Int               @id @default(autoincrement())
+  correlationId        String            @unique @map("correlation_id") @db.Uuid
+  sifra                String?           @unique @db.VarChar(64)
+  status               ReservationStatus @default(PENDING)
+  ime                  String            @db.VarChar(100)
+  prezime              String            @db.VarChar(100)
+  email                String            @db.VarChar(255)
+  adresa               String            @db.VarChar(255)
+  postanskiBroj        String            @map("postanski_broj") @db.VarChar(20)
+  mesto                String            @db.VarChar(100)
+  drzava               String            @db.VarChar(100)
+  currency             String            @db.VarChar(3)
+  exchangeRate         Decimal           @default(1) @map("exchange_rate") @db.Decimal(15, 6)
+  basePriceRsd         Decimal           @default(0) @map("base_price_rsd") @db.Decimal(10, 2)
+  discountAmountRsd    Decimal           @default(0) @map("discount_amount_rsd") @db.Decimal(10, 2)
+  discountType         DiscountType      @default(NONE) @map("discount_type")
+  finalPriceRsd        Decimal           @default(0) @map("final_price_rsd") @db.Decimal(10, 2)
+  finalPriceForeign    Decimal           @default(0) @map("final_price_foreign") @db.Decimal(10, 2)
+  promoCodeApplied     String?           @map("promo_code_applied") @db.VarChar(20)
+  promoRejectionReason String?           @map("promo_rejection_reason") @db.VarChar(100)
+  createdAt            DateTime          @default(now()) @map("created_at")
+  updatedAt            DateTime          @updatedAt @map("updated_at")
+
+  reservationServices ReservationService[]
+  generatedPromoCode  PromoCode?           @relation("GeneratedBy")
+  usedPromoCodes      PromoCode[]          @relation("UsedBy")
+
+  @@index([email])
+  @@index([status])
+  @@index([correlationId])
+  @@index([sifra])
+  @@index([createdAt])
+  @@map("reservations")
+}
+
+model ReservationService {
+  id               Int      @id @default(autoincrement())
+  reservationId    Int      @map("reservation_id")
+  serviceId        Int      @map("service_id")
+  slotDatetime     DateTime @map("slot_datetime")
+  priceSnapshotRsd Decimal  @map("price_snapshot_rsd") @db.Decimal(10, 2)
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  reservation Reservation @relation(fields: [reservationId], references: [id])
+  service     Service     @relation(fields: [serviceId], references: [id])
+
+  @@unique([reservationId, serviceId, slotDatetime])
+  @@index([serviceId, slotDatetime])
+  @@map("reservation_services")
+}
+
+model PromoCode {
+  id                       Int             @id @default(autoincrement())
+  code                     String          @unique @db.VarChar(20)
+  status                   PromoCodeStatus @default(ACTIVE)
+  discountPercentage       Decimal         @default(5.00) @map("discount_percentage") @db.Decimal(5, 2)
+  generatedByReservationId Int             @unique @map("generated_by_reservation_id")
+  usedByReservationId      Int?            @map("used_by_reservation_id")
+  createdAt                DateTime        @default(now()) @map("created_at")
+  usedAt                   DateTime?       @map("used_at")
+
+  generatedByReservation Reservation  @relation("GeneratedBy", fields: [generatedByReservationId], references: [id])
+  usedByReservation      Reservation? @relation("UsedBy", fields: [usedByReservationId], references: [id])
+
+  @@index([code])
+  @@index([generatedByReservationId])
+  @@map("promo_codes")
+}
+
+model ReservationError {
+  id            Int      @id @default(autoincrement())
+  correlationId String   @map("correlation_id") @db.Uuid
+  reason        String   @db.VarChar(100)
+  payload       Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([correlationId])
+  @@map("reservation_errors")
+}

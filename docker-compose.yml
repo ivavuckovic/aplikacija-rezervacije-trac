@@ -1,0 +1,189 @@
+version: "3.9"
+
+services:
+
+  # ─────────────────────────────────────
+  # INFRASTRUKTURA
+  # ─────────────────────────────────────
+
+  postgres-a1:
+    image: postgres:15-alpine
+    container_name: trac_postgres_a1
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_A1_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_A1_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_A1_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_a1:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_A1_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-a2:
+    image: postgres:15-alpine
+    container_name: trac_postgres_a2
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_A2_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_A2_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_A2_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_a2:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_A2_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: trac_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: trac_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # ─────────────────────────────────────
+  # BACKEND A.1
+  # ─────────────────────────────────────
+
+  backend-a1:
+    build:
+      context: ./packages/backend-a1
+      dockerfile: Dockerfile
+    container_name: trac_backend_a1
+    restart: unless-stopped
+    environment:
+      DATABASE_URL:      postgresql://${POSTGRES_A1_USER}:${POSTGRES_A1_PASSWORD}@postgres-a1:5432/${POSTGRES_A1_DB}
+      REDIS_URL:         redis://redis:6379
+      RABBITMQ_URL:      amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      EXCHANGE_RATE_KEY: ${EXCHANGE_RATE_KEY}
+      PORT:              4000
+      NODE_ENV:          production
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres-a1:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ─────────────────────────────────────
+  # WORKER A.1 (Background Processor)
+  # ─────────────────────────────────────
+
+  worker-a1:
+    build:
+      context: ./packages/worker-a1
+      dockerfile: Dockerfile
+    container_name: trac_worker_a1
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_A1_USER}:${POSTGRES_A1_PASSWORD}@postgres-a1:5432/${POSTGRES_A1_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      NODE_ENV:     production
+    depends_on:
+      postgres-a1:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ─────────────────────────────────────
+  # BACKEND A.2
+  # ─────────────────────────────────────
+
+  backend-a2:
+    build:
+      context: ./packages/backend-a2
+      dockerfile: Dockerfile
+    container_name: trac_backend_a2
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_A2_USER}:${POSTGRES_A2_PASSWORD}@postgres-a2:5432/${POSTGRES_A2_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      PORT:         4001
+      NODE_ENV:     production
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres-a2:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # ─────────────────────────────────────
+  # FRONTEND A.1
+  # ─────────────────────────────────────
+
+  frontend-a1:
+    build:
+      context: ./packages/frontend-a1
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:4000/api
+    container_name: trac_frontend_a1
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-a1
+
+  # ─────────────────────────────────────
+  # FRONTEND A.2
+  # ─────────────────────────────────────
+
+  frontend-a2:
+    build:
+      context: ./packages/frontend-a2
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:4001/api
+    container_name: trac_frontend_a2
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend-a2
+
+# ─────────────────────────────────────
+# VOLUMES
+# ─────────────────────────────────────
+
+volumes:
+  pgdata_a1:
+  pgdata_a2:
+  redisdata:
+  rabbitmqdata:

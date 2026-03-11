@@ -1,0 +1,52 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-primary:      #2e7d32;
+  --color-primary-dark: #1b5e20;
+  --color-secondary:    #e8f5e9;
+  --color-bg:           #f9fdf9;
+  --color-text:         #1c1c1c;
+  --color-text-muted:   #5a5a5a;
+  --color-border:       #c8e6c9;
+  --color-error:        #d32f2f;
+  --color-success:      #2e7d32;
+  --color-warning:      #f57c00;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  font-family: var(--font-sans);
+  font-size:   16px;
+  line-height: 1.5;
+  color:       var(--color-text);
+  background:  var(--color-bg);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}

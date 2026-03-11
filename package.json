@@ -1,0 +1,24 @@
+{
+  "name": "trac-salon",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/backend-a1",
+    "packages/backend-a2",
+    "packages/worker-a1",
+    "packages/frontend-a1",
+    "packages/frontend-a2"
+  ],
+  "scripts": {
+    "dev:backend-a1":  "npm run dev --workspace=packages/backend-a1",
+    "dev:backend-a2":  "npm run dev --workspace=packages/backend-a2",
+    "dev:worker-a1":   "npm run dev --workspace=packages/worker-a1",
+    "dev:frontend-a1": "npm run dev --workspace=packages/frontend-a1",
+    "dev:frontend-a2": "npm run dev --workspace=packages/frontend-a2",
+    "build:all":       "npm run build --workspaces",
+    "docker:up":       "docker-compose up --build",
+    "docker:down":     "docker-compose down -v",
+    "prisma:migrate:a1": "npm run prisma:migrate --workspace=packages/backend-a1",
+    "prisma:migrate:a2": "npm run prisma:migrate --workspace=packages/backend-a2"
+  }
+}

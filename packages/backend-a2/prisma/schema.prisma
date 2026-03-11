@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CategorySnapshot {
+  id               Int      @id @default(autoincrement())
+  sourceCategoryId Int      @unique @map("source_category_id")
+  naziv            String   @db.VarChar(100)
+  lastSyncedAt     DateTime @default(now()) @map("last_synced_at")
+
+  categoryStats CategoryStats?
+
+  @@map("categories_snapshot")
+}
+
+model ReservationReport {
+  id                  Int      @id @default(autoincrement())
+  sourceReservationId Int      @unique @map("source_reservation_id")
+  correlationId       String   @map("correlation_id") @db.Uuid
+  status              String   @db.VarChar(20)
+  email               String   @db.VarChar(255)
+  currency            String   @db.VarChar(3)
+  finalPriceRsd       Decimal  @map("final_price_rsd") @db.Decimal(10, 2)
+  finalPriceForeign   Decimal  @map("final_price_foreign") @db.Decimal(10, 2)
+  discountType        String   @map("discount_type") @db.VarChar(30)
+  discountAmountRsd   Decimal  @default(0) @map("discount_amount_rsd") @db.Decimal(10, 2)
+  promoCodeApplied    String?  @map("promo_code_applied") @db.VarChar(20)
+  createdAt           DateTime @map("created_at")
+  updatedAt           DateTime @map("updated_at")
+  syncedAt            DateTime @default(now()) @map("synced_at")
+
+  services ReservationServiceReport[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("reservations_report")
+}
+
+model ReservationServiceReport {
+  id                  Int      @id @default(autoincrement())
+  reservationReportId Int      @map("reservation_report_id")
+  sourceServiceId     Int      @map("source_service_id")
+  serviceNaziv        String   @map("service_naziv") @db.VarChar(150)
+  categoryId          Int      @map("category_id")
+  categoryNaziv       String   @map("category_naziv") @db.VarChar(100)
+  slotDatetime        DateTime @map("slot_datetime")
+  priceSnapshotRsd    Decimal  @map("price_snapshot_rsd") @db.Decimal(10, 2)
+
+  reservation ReservationReport @relation(fields: [reservationReportId], references: [id])
+
+  @@index([categoryId])
+  @@index([slotDatetime])
+  @@map("reservation_services_report")
+}
+
+model DailyStats {
+  id                Int      @id @default(autoincrement())
+  statDate          DateTime @unique @map("stat_date") @db.Date
+  totalReservations Int      @default(0) @map("total_reservations")
+  totalRevenueRsd   Decimal  @default(0) @map("total_revenue_rsd") @db.Decimal(12, 2)
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([statDate])
+  @@map("daily_stats")
+}
+
+model CategoryStats {
+  id               Int      @id @default(autoincrement())
+  categoryId       Int      @unique @map("category_id")
+  categoryNaziv    String   @map("category_naziv") @db.VarChar(100)
+  totalBookedSlots Int      @default(0) @map("total_booked_slots")
+  totalRevenueRsd  Decimal  @default(0) @map("total_revenue_rsd") @db.Decimal(12, 2)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  category CategorySnapshot @relation(fields: [categoryId], references: [sourceCategoryId])
+
+  @@map("category_stats")
+}
+
+model SyncEvent {
+  id                  Int      @id @default(autoincrement())
+  eventId             String   @unique @map("event_id") @db.Uuid
+  eventType           String   @map("event_type") @db.VarChar(50)
+  sourceReservationId Int      @map("source_reservation_id")
+  payload             Json
+  processedAt         DateTime @default(now()) @map("processed_at")
+  status              String   @default("SUCCESS") @db.VarChar(20)
+  errorMessage        String?  @map("error_message") @db.Text
+
+  @@index([eventId])
+  @@index([sourceReservationId])
+  @@map("sync_events")
+}
