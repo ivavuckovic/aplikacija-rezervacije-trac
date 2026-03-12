@@ -16,7 +16,7 @@ export function Footer() {
 
         {salonInfo && (
           <div className={styles.hours}>
-            🕐 Radno vrijeme: {salonInfo.radnoVremeOd} – {salonInfo.radnoVremeDo}
+            🕐 Radno vreme: {salonInfo.radnoVremeOd} – {salonInfo.radnoVremeDo}
           </div>
         )}
 

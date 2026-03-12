@@ -11,7 +11,7 @@ const PersonalDataSchema = z.object({
   email:         z.string().email('Unesite ispravnu email adresu'),
   adresa:        z.string().min(3, 'Adresa je obavezna'),
   postanskiBroj: z.string().min(4, 'Unesite ispravan poštanski broj'),
-  mesto:         z.string().min(2, 'Mjesto je obavezno'),
+  mesto:         z.string().min(2, 'Mesto je obavezno'),
   drzava:        z.string().min(2, 'Država je obavezna'),
 });
 
@@ -128,7 +128,7 @@ export function Step1PersonalData({ onNext }: Props) {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Mjesto <span className={styles.required}>*</span>
+              Mesto <span className={styles.required}>*</span>
             </label>
             <input
               {...register('mesto')}

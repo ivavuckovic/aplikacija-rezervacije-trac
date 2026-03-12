@@ -156,7 +156,7 @@ export function MyReservationPage() {
         authCredentials.sifra.toUpperCase(),
         authCredentials.email.toLowerCase(),
       );
-      toast.success('Rezervacija je uspješno otkazana');
+      toast.success('Rezervacija je uspešno otkazana');
       const updated = await reservationService.getByCredentials(
         authCredentials.sifra.toUpperCase(),
         authCredentials.email.toLowerCase(),
@@ -217,7 +217,7 @@ export function MyReservationPage() {
               className={styles.authBtn}
             >
               {isLoading ? (
-                <><span className={styles.btnSpinner} /> Provjera...</>
+                <><span className={styles.btnSpinner} /> Provera...</>
               ) : (
                 'Pristupi rezervaciji'
               )}
@@ -272,9 +272,9 @@ export function MyReservationPage() {
 
           {/* Cijena */}
           <div className={styles.infoCard}>
-            <h3 className={styles.cardTitle}>💶 Cijena</h3>
+            <h3 className={styles.cardTitle}>💶 Cena</h3>
             <InfoRow
-              label="Osnovna cijena"
+              label="Osnovna cena"
               value={`${reservation.basePriceRsd.toLocaleString('sr-RS')} RSD`}
             />
             {reservation.discountAmountRsd > 0 && (

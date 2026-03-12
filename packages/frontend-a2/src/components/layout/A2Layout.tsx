@@ -11,8 +11,8 @@ export function A2Layout() {
     const diffMs = now.getTime() - lastRefreshed.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     if (diffMins < 1) return 'Upravo sada';
-    if (diffMins === 1) return '1 minut prije';
-    return `${diffMins} minuta prije`;
+    if (diffMins === 1) return '1 minut pre';
+    return `${diffMins} minuta pre`;
   };
 
   return (

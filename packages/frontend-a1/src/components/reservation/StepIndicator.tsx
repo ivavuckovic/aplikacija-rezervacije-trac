@@ -9,7 +9,7 @@ interface Step {
 const STEPS: Step[] = [
   { number: 1, label: 'Vaši podaci',    icon: '👤' },
   { number: 2, label: 'Usluge',         icon: '💆' },
-  { number: 3, label: 'Cijena',         icon: '💶' },
+  { number: 3, label: 'Cena',           icon: '💶' },
   { number: 4, label: 'Potvrda',        icon: '✅' },
 ];
 

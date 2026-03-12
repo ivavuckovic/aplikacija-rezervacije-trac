@@ -88,7 +88,7 @@ export function Step3PriceAndCurrency({ onNext, onBack }: Props) {
 
   const handleNext = () => {
     if (!priceBreakdown) {
-      toast.error('Obračun cijene nije završen');
+      toast.error('Obračun cene nije završen');
       return;
     }
     onNext();
@@ -97,9 +97,9 @@ export function Step3PriceAndCurrency({ onNext, onBack }: Props) {
   return (
     <div className={styles.stepContainer}>
       <div className={styles.stepHeader}>
-        <h2 className={styles.stepTitle}>Obračun cijene</h2>
+        <h2 className={styles.stepTitle}>Obračun cene</h2>
         <p className={styles.stepDesc}>
-          Odaberite valutu i unesite promo-kod ako ga posjedujete.
+          Odaberite valutu i unesite promo-kod ako ga posedujete.
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export function Step3PriceAndCurrency({ onNext, onBack }: Props) {
                 disabled={!promoInput.trim() || isCalculating}
                 className={styles.promoApplyBtn}
               >
-                Primijeni
+                Primeni
               </button>
               {promoCode && (
                 <button
@@ -201,7 +201,7 @@ export function Step3PriceAndCurrency({ onNext, onBack }: Props) {
 
         {/* Desna kolona — obračun */}
         <div className={styles.priceBreakdown}>
-          <h3 className={styles.breakdownTitle}>Pregled cijene</h3>
+          <h3 className={styles.breakdownTitle}>Pregled cene</h3>
 
           {isCalculating && (
             <div className={styles.calculating}>
@@ -219,7 +219,7 @@ export function Step3PriceAndCurrency({ onNext, onBack }: Props) {
 
               {/* Osnovna cijena */}
               <div className={styles.breakdownRow}>
-                <span>Osnovna cijena</span>
+                <span>Osnovna cena</span>
                 <span>{priceBreakdown.basePriceRsd.toLocaleString('sr-RS')} RSD</span>
               </div>
 

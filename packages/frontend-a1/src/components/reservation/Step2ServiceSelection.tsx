@@ -56,7 +56,7 @@ export function Step2ServiceSelection({ onNext, onBack }: Props) {
       removeSelection(service.id, slot.datetimeStr);
     } else {
       addSelection({ serviceId: service.id, slotDatetime: slot.datetimeStr });
-      toast.success(`Termin ${formatTime(slot.datetimeStr)} dodan`);
+      toast.success(`Termin ${formatTime(slot.datetimeStr)} dodat`);
     }
   };
 
@@ -225,7 +225,7 @@ function ServiceSlotPicker({
                         title={
                           slot.isFull
                             ? 'Termin je popunjen'
-                            : `${slot.availableSpots} slobodnih mjesta`
+                            : `${slot.availableSpots} slobodnih mesta`
                         }
                       >
                         <span className={styles.slotTime}>

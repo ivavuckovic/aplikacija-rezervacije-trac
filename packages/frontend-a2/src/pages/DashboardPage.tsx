@@ -94,7 +94,7 @@ export function DashboardPage() {
         />
         <KpiCard
           icon="💰"
-          label="Ukupna prihod"
+          label="Ukupan prihod"
           value={`${(summary?.totalRevenue || 0).toLocaleString('sr-RS')} RSD`}
         />
         <KpiCard
@@ -104,7 +104,7 @@ export function DashboardPage() {
         />
         <KpiCard
           icon="📊"
-          label="Prosječna cijena po terminu"
+          label="Prosečna cena po terminu"
           value={`${(summary?.avgPricePerSlot || 0).toLocaleString('sr-RS')} RSD`}
         />
         <KpiCard

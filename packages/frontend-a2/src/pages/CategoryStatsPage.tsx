@@ -128,7 +128,7 @@ export function CategoryStatsPage() {
                   <th>Broj termina</th>
                   <th>% od ukupno</th>
                   <th>Ukupan prihod</th>
-                  <th>Prosječna cijena</th>
+                  <th>Prosečna cena</th>
                   <th>Broj rezervacija</th>
                 </tr>
               </thead>

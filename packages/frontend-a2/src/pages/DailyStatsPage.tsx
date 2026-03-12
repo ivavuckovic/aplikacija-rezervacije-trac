@@ -108,7 +108,7 @@ export function DailyStatsPage() {
           <div className={styles.miniKpiValue}>{dailyStats.reduce((sum, d) => sum + d.totalPrice, 0).toLocaleString('sr-RS')} RSD</div>
         </div>
         <div className={styles.miniKpi}>
-          <div className={styles.miniKpiLabel}>Prosječna dnevna cijena</div>
+          <div className={styles.miniKpiLabel}>Prosečna dnevna cena</div>
           <div className={styles.miniKpiValue}>{Math.round(avgPrice).toLocaleString('sr-RS')} RSD</div>
         </div>
       </div>
@@ -143,7 +143,7 @@ export function DailyStatsPage() {
                 y={Math.round(avgPrice)}
                 stroke="#f59e0b"
                 strokeDasharray="5 5"
-                label={{ value: 'Prosječna cijena', position: 'right', fill: '#f59e0b' }}
+                label={{ value: 'Prosečna cena', position: 'right', fill: '#f59e0b' }}
               />
               <Area
                 yAxisId="left"
@@ -181,7 +181,7 @@ export function DailyStatsPage() {
                   <th>Datum</th>
                   <th>Broj termina</th>
                   <th>Ukupan prihod</th>
-                  <th>Prosječna cijena</th>
+                  <th>Prosečna cena</th>
                   <th>Trend</th>
                 </tr>
               </thead>

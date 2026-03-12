@@ -52,7 +52,7 @@ export function Step4Confirmation({ onBack }: Props) {
       setPollCount((c) => {
         if (c >= MAX_POLLS) {
           stopPolling();
-          toast.error('Obrada rezervacije traje duže od očekivanog. Pokušajte provjeriti status.');
+          toast.error('Obrada rezervacije traje duže od očekivanog. Pokušajte proveriti status.');
           return c;
         }
         return c + 1;
@@ -68,7 +68,7 @@ export function Step4Confirmation({ onBack }: Props) {
         } else if (status.status === 'FAILED') {
           setConfirmed(status);
           stopPolling();
-          toast.error(`Rezervacija nije uspjela: ${status.message ?? 'Nepoznata greška'}`);
+          toast.error(`Rezervacija nije uspela: ${status.message ?? 'Nepoznata greška'}`);
         }
         // PENDING → nastavi polling
       } catch {
@@ -123,7 +123,7 @@ export function Step4Confirmation({ onBack }: Props) {
         <div className={styles.successIcon}>🎉</div>
         <h2 className={styles.successTitle}>Rezervacija potvrđena!</h2>
         <p className={styles.successDesc}>
-          Vaša rezervacija je uspješno kreirana. Sačuvajte šifru za kasniji pristup.
+          Vaša rezervacija je uspešno kreirana. Sačuvajte šifru za kasniji pristup.
         </p>
 
         {/* Šifra */}
@@ -139,7 +139,7 @@ export function Step4Confirmation({ onBack }: Props) {
           </div>
           <div className={styles.codeValue}>{confirmed.sifra}</div>
           <p className={styles.codeHint}>
-            Koristite šifru i email za pristup, izmjenu ili otkazivanje rezervacije.
+            Koristite šifru i email za pristup, izmenu ili otkazivanje rezervacije.
           </p>
         </div>
 
@@ -147,7 +147,7 @@ export function Step4Confirmation({ onBack }: Props) {
         {confirmed.promoCode && (
           <div className={`${styles.codeBox} ${styles.promoBox}`}>
             <div className={styles.codeHeader}>
-              <span>🎁 Vaš promo-kod za sljedeću rezervaciju</span>
+              <span>🎁 Vaš promo-kod za sledeću rezervaciju</span>
               <button
                 onClick={() => copyToClipboard(confirmed.promoCode!, 'promo')}
                 className={styles.copyBtn}
@@ -213,7 +213,7 @@ export function Step4Confirmation({ onBack }: Props) {
     return (
       <div className={styles.failedScreen}>
         <div className={styles.failedIcon}>❌</div>
-        <h2>Rezervacija nije uspjela</h2>
+        <h2>Rezervacija nije uspela</h2>
         <p className={styles.failedMsg}>
           {confirmed.message ?? 'Nažalost, rezervacija nije mogla biti obrađena.'}
         </p>
@@ -234,7 +234,7 @@ export function Step4Confirmation({ onBack }: Props) {
         <div className={styles.pollingSpinner} />
         <h3>Rezervacija se obrađuje...</h3>
         <p className={styles.pollingDesc}>
-          Molimo sačekajte dok sistem provjeri dostupnost termina i potvrdi rezervaciju.
+          Molimo sačekajte dok sistem proveri dostupnost termina i potvrdi rezervaciju.
         </p>
         <div className={styles.pollingProgress}>
           <div
@@ -242,7 +242,7 @@ export function Step4Confirmation({ onBack }: Props) {
             style={{ width: `${Math.min((pollCount / MAX_POLLS) * 100, 95)}%` }}
           />
         </div>
-        <p className={styles.pollingHint}>Provjera {pollCount + 1} / {MAX_POLLS}</p>
+        <p className={styles.pollingHint}>Provera {pollCount + 1} / {MAX_POLLS}</p>
       </div>
     );
   }
@@ -253,7 +253,7 @@ export function Step4Confirmation({ onBack }: Props) {
       <div className={styles.stepHeader}>
         <h2 className={styles.stepTitle}>Pregled i potvrda</h2>
         <p className={styles.stepDesc}>
-          Provjerite podatke prije potvrde rezervacije.
+          Proverite podatke pre potvrde rezervacije.
         </p>
       </div>
 
@@ -289,9 +289,9 @@ export function Step4Confirmation({ onBack }: Props) {
       {/* Cijena */}
       {priceBreakdown && (
         <div className={styles.summaryCard}>
-          <h3 className={styles.summaryCardTitle}>💶 Cijena</h3>
+          <h3 className={styles.summaryCardTitle}>💶 Cena</h3>
           <div className={styles.summaryGrid}>
-            <SummaryRow label="Osnovna cijena" value={`${priceBreakdown.basePriceRsd.toLocaleString('sr-RS')} RSD`} />
+            <SummaryRow label="Osnovna cena" value={`${priceBreakdown.basePriceRsd.toLocaleString('sr-RS')} RSD`} />
             {priceBreakdown.discountType !== 'NONE' && (
               <SummaryRow
                 label="Popust"

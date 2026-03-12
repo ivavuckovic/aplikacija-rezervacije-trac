@@ -99,7 +99,7 @@ export function ReservationsListPage() {
                   <th>Status</th>
                   <th>Početni datum</th>
                   <th>Broj termina</th>
-                  <th>Ukupna cijena</th>
+                  <th>Ukupna cena</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,7 +142,7 @@ export function ReservationsListPage() {
                 disabled={page === data.pages}
                 className={styles.paginationBtn}
               >
-                Sljedeće →
+                Sledeće →
               </button>
             </div>
           )}

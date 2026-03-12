@@ -60,7 +60,7 @@ export function HomePage() {
             <div className={styles.infoCard}>
               <span className={styles.infoIcon}>🕐</span>
               <div>
-                <h3>Radno vrijeme</h3>
+                <h3>Radno vreme</h3>
                 <p>{salonInfo.radnoVremeOd} – {salonInfo.radnoVremeDo}</p>
                 <small>Pon – Ned</small>
               </div>
