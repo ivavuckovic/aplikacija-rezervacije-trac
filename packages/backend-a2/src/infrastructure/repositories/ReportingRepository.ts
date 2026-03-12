@@ -289,6 +289,9 @@ export class ReportingRepository {
       categoryNaziv:    s.categoryNaziv,
       totalBookedSlots: s.totalBookedSlots,
       totalRevenueRsd:  Number(s.totalRevenueRsd),
+      totalSlots:       s.totalBookedSlots,
+      totalPrice:       Number(s.totalRevenueRsd),
+      reservationCount: 0,
     }));
   }
 
@@ -309,6 +312,9 @@ export class ReportingRepository {
       categoryNaziv:    r.categoryNaziv,
       totalBookedSlots: r._count.id,
       totalRevenueRsd:  Number(r._sum.priceSnapshotRsd ?? 0),
+      totalSlots:       r._count.id,
+      totalPrice:       Number(r._sum.priceSnapshotRsd ?? 0),
+      reservationCount: 0,
     }));
   }
 
@@ -334,6 +340,8 @@ export class ReportingRepository {
       date:              s.statDate.toISOString().split('T')[0],
       totalReservations: s.totalReservations,
       totalRevenueRsd:   Number(s.totalRevenueRsd),
+      totalSlots:        s.totalReservations,
+      totalPrice:        Number(s.totalRevenueRsd),
     }));
   }
 
@@ -376,38 +384,41 @@ export class ReportingRepository {
       date,
       totalReservations: values.count,
       totalRevenueRsd:   Math.round(values.revenue * 100) / 100,
+      totalSlots:        values.count,
+      totalPrice:        Math.round(values.revenue * 100) / 100,
     }));
   }
 
   // Summary statistika za dashboard header
   async getSummary(): Promise<ReportingSummary> {
-    const [total, confirmed, cancelled, topCat, lastSync] = await Promise.all([
+    const [total, topCat, slotsAgg, revenueAgg] = await Promise.all([
       prisma.reservationReport.count(),
-      prisma.reservationReport.count({ where: { status: 'CONFIRMED' } }),
-      prisma.reservationReport.count({ where: { status: 'CANCELLED' } }),
       prisma.categoryStats.findFirst({ orderBy: { totalBookedSlots: 'desc' } }),
-      prisma.syncEvent.findFirst({ orderBy: { processedAt: 'desc' } }),
+      prisma.categoryStats.aggregate({ _sum: { totalBookedSlots: true } }),
+      prisma.reservationReport.aggregate({
+        where: { status: 'CONFIRMED' },
+        _sum:  { finalPriceRsd: true },
+      }),
     ]);
 
-    const totalRevenue = await prisma.reservationReport.aggregate({
-      where:  { status: 'CONFIRMED' },
-      _sum:   { finalPriceRsd: true },
-    });
+    const totalRevenue  = Number(revenueAgg._sum.finalPriceRsd ?? 0);
+    const totalSlots    = Number(slotsAgg._sum.totalBookedSlots ?? 0);
+    const avgPricePerSlot = totalSlots > 0 ? Math.round((totalRevenue / totalSlots) * 100) / 100 : 0;
 
     return {
       totalReservations: total,
-      totalRevenueRsd:   Number(totalRevenue._sum.finalPriceRsd ?? 0),
-      confirmedCount:    confirmed,
-      cancelledCount:    cancelled,
-      topCategory:       topCat?.categoryNaziv ?? null,
-      lastSyncedAt:      lastSync?.processedAt.toISOString() ?? null,
+      totalRevenue,
+      totalSlots,
+      avgPricePerSlot,
+      topCategory:      topCat?.categoryNaziv ?? 'N/A',
+      topCategoryCount: topCat?.totalBookedSlots ?? 0,
     };
   }
 
   // Paginirani listing rezervacija
   async getReservations(page: number, limit: number, status?: string) {
     const where = status ? { status } : {};
-    const [items, total] = await Promise.all([
+    const [rows, total] = await Promise.all([
       prisma.reservationReport.findMany({
         where,
         skip:    (page - 1) * limit,
@@ -418,12 +429,24 @@ export class ReportingRepository {
       prisma.reservationReport.count({ where }),
     ]);
 
+    const items = rows.map((r) => ({
+      id:         r.id,
+      sifra:      r.correlationId,
+      ime:        r.email.split('@')[0],
+      prezime:    '',
+      email:      r.email,
+      status:     r.status,
+      createdAt:  r.createdAt.toISOString(),
+      slotsCount: r.services.length,
+      totalPrice: Number(r.finalPriceRsd),
+    }));
+
     return {
       items,
       total,
       page,
       limit,
-      totalPages: Math.ceil(total / limit),
+      pages: Math.ceil(total / limit),
     };
   }
 }

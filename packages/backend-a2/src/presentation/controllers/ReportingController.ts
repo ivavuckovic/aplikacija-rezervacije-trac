@@ -140,25 +140,12 @@ export class ReportingController {
 
       res.json({
         success: true,
-        data:    result.items.map((r) => ({
-          id:                  r.id,
-          sourceReservationId: r.sourceReservationId,
-          status:              r.status,
-          email:               r.email,
-          currency:            r.currency,
-          finalPriceRsd:       Number(r.finalPriceRsd),
-          finalPriceForeign:   Number(r.finalPriceForeign),
-          discountType:        r.discountType,
-          discountAmountRsd:   Number(r.discountAmountRsd),
-          promoCodeApplied:    r.promoCodeApplied,
-          createdAt:           r.createdAt,
-          servicesCount:       r.services.length,
-        })),
-        pagination: {
-          page,
-          limit,
-          total:      result.total,
-          totalPages: result.totalPages,
+        data: {
+          items: result.items,
+          total: result.total,
+          page:  result.page,
+          limit: result.limit,
+          pages: result.pages,
         },
       });
     } catch (error) {

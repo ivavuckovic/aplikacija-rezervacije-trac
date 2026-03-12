@@ -65,12 +65,12 @@ export interface DailyStatRow {
 }
 
 export interface ReportingSummary {
-  totalReservations:  number;
-  totalRevenueRsd:    number;
-  confirmedCount:     number;
-  cancelledCount:     number;
-  topCategory:        string | null;
-  lastSyncedAt:       string | null;
+  totalReservations: number;
+  totalRevenue:      number;
+  totalSlots:        number;
+  avgPricePerSlot:   number;
+  topCategory:       string;
+  topCategoryCount:  number;
 }
 
 // ── RabbitMQ ─────────────────────────────────────────
