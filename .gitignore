@@ -9,14 +9,6 @@ build/
 out/
 .next/
 
-# ── Environment fajlovi (NIKAD ne commitovati!) ──────
-.env
-.env.local
-.env.development
-.env.production
-.env.test
-*.env
-
 # ── Prisma generated ─────────────────────────────────
 packages/*/src/generated/
 
