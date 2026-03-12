@@ -17,7 +17,7 @@ interface SalonState {
   clearError:      () => void;
 }
 
-export const useSalonStore = create<SalonState>((set, get) => ({
+export const useSalonStore = create<SalonState>((set, _get) => ({
   salonInfo:  null,
   categories: [],
   isLoading:  false,

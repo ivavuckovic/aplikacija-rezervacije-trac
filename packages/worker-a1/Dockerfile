@@ -23,7 +23,7 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/src/generated ./dist/generated
 COPY prisma ./prisma/
 
 CMD ["node", "dist/index.js"]

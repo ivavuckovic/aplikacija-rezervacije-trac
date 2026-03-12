@@ -4,7 +4,6 @@ import toast                           from 'react-hot-toast';
 import { useReservationStore }         from '../../store/reservationStore';
 import { useSalonStore }               from '../../store/salonStore';
 import { reservationService }          from '../../services/reservationService';
-import type { ReservationStatus }      from '../../types';
 import styles                          from './Steps.module.css';
 
 interface Props {

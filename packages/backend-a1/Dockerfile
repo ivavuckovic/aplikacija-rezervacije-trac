@@ -26,9 +26,9 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/src/generated ./dist/generated
 COPY prisma ./prisma/
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node dist/index.js"]

@@ -6,12 +6,10 @@ import toast                     from 'react-hot-toast';
 import { reservationService }    from '../services/reservationService';
 import { servicesService }       from '../services/servicesService';
 import { useSalonStore }         from '../store/salonStore';
-import { Spinner }               from '../components/ui/Spinner';
 import { Badge }                 from '../components/ui/Badge';
 import type {
   ReservationDetail,
   TimeSlot,
-  Service,
 }                                from '../types';
 import styles                    from './MyReservationPage.module.css';
 

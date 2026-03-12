@@ -7,7 +7,7 @@ import styles from './DashboardPage.module.css';
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 export function DashboardPage() {
-  const { summary, categoryStats, syncStatus, isLoading, fetchAll, lastRefreshed } = useReportingStore();
+  const { summary, categoryStats, syncStatus, isLoading, fetchAll } = useReportingStore();
   const [autoRefresh, setAutoRefresh] = useState(true);
   const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 

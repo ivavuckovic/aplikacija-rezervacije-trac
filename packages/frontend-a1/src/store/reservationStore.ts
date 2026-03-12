@@ -50,7 +50,7 @@ const INITIAL_STATE = {
 
 export const useReservationStore = create<ReservationState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...INITIAL_STATE,
 
       setStep: (step) => set({ step }),

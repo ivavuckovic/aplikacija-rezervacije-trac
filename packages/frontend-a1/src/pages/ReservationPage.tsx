@@ -11,7 +11,7 @@ import styles                     from './ReservationPage.module.css';
 
 export function ReservationPage() {
   const { categories, isLoading, fetchCategories } = useSalonStore();
-  const { step, setStep, resetForm }               = useReservationStore();
+  const { step, setStep }               = useReservationStore();
 
   useEffect(() => {
     if (categories.length === 0) fetchCategories();
