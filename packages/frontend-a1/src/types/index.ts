@@ -162,3 +162,11 @@ export interface ApiResponse<T> {
   errors?:  string[];
   warning?: string;
 }
+
+// ── Admin Tipovi ────────────────────────────────────
+export interface DiscountConfig {
+  id:                 number;
+  discountPercentage: string | number;
+  validUntil:         string;
+  isActive:           boolean;
+}

@@ -5,6 +5,7 @@ import { ServicesPage }            from './pages/ServicesPage';
 import { ReservationPage }         from './pages/ReservationPage';
 import { ReservationStatusPage }   from './pages/ReservationStatusPage';
 import { MyReservationPage }       from './pages/MyReservationPage';
+import { AdminPage }               from './pages/AdminPage';
 
 export default function App() {
   return (
@@ -27,6 +28,9 @@ export default function App() {
 
         {/* Pregled/izmena/otkazivanje rezervacije */}
         <Route path="moja-rezervacija" element={<MyReservationPage />} />
+
+        {/* Admin Paneli */}
+        <Route path="admin" element={<AdminPage />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

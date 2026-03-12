@@ -5,6 +5,7 @@ import {
   CreateReservationData,
   UpdateReservationData,
   ReservationWithServices,
+  ReservationWithPromo,
 } from './interfaces/IReservationRepository';
 
 export class ReservationRepositoryImpl implements IReservationRepository {
@@ -13,8 +14,11 @@ export class ReservationRepositoryImpl implements IReservationRepository {
     return prisma.reservation.findUnique({ where: { id } });
   }
 
-  async findByCorrelationId(correlationId: string): Promise<Reservation | null> {
-    return prisma.reservation.findUnique({ where: { correlationId } });
+  async findByCorrelationId(correlationId: string): Promise<ReservationWithPromo | null> {
+    return prisma.reservation.findUnique({
+      where: { correlationId },
+      include: { generatedPromoCode: true },
+    });
   }
 
   async findBySifraAndEmail(
@@ -27,6 +31,7 @@ export class ReservationRepositoryImpl implements IReservationRepository {
         email: { equals: email, mode: 'insensitive' },
       },
       include: {
+        generatedPromoCode: true,
         reservationServices: {
           include: {
             service: {

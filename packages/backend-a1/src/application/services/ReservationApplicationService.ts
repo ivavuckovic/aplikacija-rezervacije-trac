@@ -204,7 +204,7 @@ export class ReservationApplicationService {
       correlationId,
       status:    reservation.status,
       sifra:     reservation.sifra ?? undefined,
-      promoCode: full?.promoCodeApplied ?? undefined,
+      promoCode: (reservation as any).generatedPromoCode?.code ?? undefined,
       priceBreakdown: {
         finalPriceRsd:     Number(reservation.finalPriceRsd),
         finalPriceForeign: Number(reservation.finalPriceForeign),

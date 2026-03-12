@@ -2,6 +2,7 @@ import {
   Reservation,
   ReservationService,
   ReservationStatus,
+  PromoCode,
 } from '../../../generated/prisma';
 
 export interface CreateReservationData {
@@ -42,7 +43,12 @@ export interface UpdateReservationData {
   promoCodeApplied?:   string;
 }
 
+export type ReservationWithPromo = Reservation & {
+  generatedPromoCode: PromoCode | null;
+};
+
 export type ReservationWithServices = Reservation & {
+  generatedPromoCode: PromoCode | null;
   reservationServices: (ReservationService & {
     service: {
       id:      number;
@@ -56,7 +62,7 @@ export type ReservationWithServices = Reservation & {
 export interface IReservationRepository {
   findById(id: number): Promise<Reservation | null>;
 
-  findByCorrelationId(correlationId: string): Promise<Reservation | null>;
+  findByCorrelationId(correlationId: string): Promise<ReservationWithPromo | null>;
 
   findBySifraAndEmail(
     sifra: string,

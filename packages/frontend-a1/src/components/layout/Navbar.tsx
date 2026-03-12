@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { to: '/usluge',            label: 'Usluge'       },
   { to: '/rezervacija',       label: 'Rezervišite'  },
   { to: '/moja-rezervacija',  label: 'Moja rezervacija' },
+  { to: '/admin',             label: 'Admin Panel'  },
 ];
 
 export function Navbar() {

@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -7,7 +8,8 @@ RUN apk add --no-cache openssl
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm install --legacy-peer-deps
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps --no-audit --no-fund
 
 COPY tsconfig.json ./
 COPY src ./src/
@@ -25,7 +27,8 @@ ENV NODE_ENV=production
 RUN apk add --no-cache openssl
 
 COPY package*.json ./
-RUN npm install --legacy-peer-deps --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps --omit=dev --no-audit --no-fund
 
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/dist ./dist
